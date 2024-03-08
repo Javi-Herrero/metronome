@@ -1,0 +1,137 @@
+#:kivy 1.0
+#:import kivy kivy
+
+<Ball@GridLayout>
+
+        angleStart: 0
+        angleEnd: 0
+        centerPos: 750, 500
+        rize: 3, 1
+        canvas:
+                Color:
+                        rgba: 1, 0, 1, 0.5
+                Ellipse:
+                        size: root.rize
+                        pos:  root.centerPos
+                        angle_start: root.angleStart
+                        angle_end: root.angleEnd
+                        id: circle
+
+BoxLayout:
+        orientation: 'vertical'
+        spacing: 50
+        id: mainBox
+        BoxLayout:
+
+                size_hint: (1, None)
+                height: '50sp'
+                pos_hint:{'top':1, }
+                cols: 3
+
+                Button:
+                        text:'-'
+                        font_size: '30sp'
+                        background_color: (0, 0, 0, 0 )
+                        on_press: app.add_beats('-')
+
+                GridLayout:
+                        id:beats
+                        size_hint: (None, None)
+                        width: mainBox.width * 0.7
+                        cols: app.cols
+                        Button:
+                                id: dumb
+                                text:'1'
+                                background_color: (0, 0, 0, 0 )
+                Button:
+                        text:'+'
+                        font_size: '30sp'
+                        background_color: (0, 0, 0, 0 )
+                        on_press: app.add_beats('+')
+
+
+        Ball:
+                id: ball
+                angleEnd: 0
+                angleStart: 0
+                rize: self.width * 0.5 and (self.width * 0.75 if self.width * 0.75 <= 750 else 750), self.width * 0.5 and (self.width * 0.75 if self.width * 0.75 <= 750 else 750)
+                centerPos: (self.width * 0.5) - (self.width * 0.75 and (self.width * 0.75 if self.width * 0.75 <= 750 else 750)) / 2, (self.height * 1.8) - (self.width * 0.5 and (self.width * 0.5 if self.width * 0.5 <= 750 else 750)) / 2
+
+        BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                        background_color: (0, 0, 0, 0)
+                        text: '-'
+                        font_size: '30sp'
+                        on_press: label.status = str(int(label.status) - 1)
+
+                Label:
+                        id: label
+                        status: '120'
+                        text: '{} Bpm'.format(self.status)
+                        font_size: '30sp'
+
+                Button:
+                        background_color: (0, 0, 0, 0 )
+                        text: '+'
+                        font_size: '30sp'
+                        on_press: label.status =  str(int(label.status) + 1)
+
+
+        BoxLayout:
+                size_hint_y: None
+                height: '150sp'
+                spacing: 50
+                orientation: 'vertical'
+
+                Label:
+                        id: subdivisionsLabel
+                        status: ''
+                        text: 'subdivisions: {}'.format(self.status)
+                Slider:
+                        id: subdivisions
+                        size_hint: 0.75, 1
+                        pos_hint: {'x':.15, 'y':1}
+                        id: subdiv
+                        min: 1
+                        max: 9
+                        step: 1
+                        value_track: True
+                        on_value:
+                                app.apply_settings({'subdivisions': self.value, 'tempo':label.status })
+                                subdivisionsLabel.status = str(self.value)
+                                app.reset_count(slider_move=True)
+                Label:
+                        id: temps
+                        text: 'tempo'
+                Slider:
+                        size_hint: 0.75, 1
+                        pos_hint: {'x':.15, 'y':1}
+                        id: temps
+                        min: 10
+                        max: 250
+                        step: 1
+                        value_track: True
+                        value: int(label.status)
+                        on_value: label.status = str(self.value)
+        BoxLayout:
+
+                size_hint_y: None
+                height: '50sp'
+                orientation: 'horizontal'
+
+                ToggleButton:
+                        id: btn1
+                        group: 'a'
+                        text: 'Start'
+                        on_press:
+                                #app.startMetro()
+                                app.reset_count(slider_move=False)
+
+
+
+                Button:
+                        id: btn2
+                        group: 'a'
+                        text: 'Tap'
+                        allow_no_selection: False
